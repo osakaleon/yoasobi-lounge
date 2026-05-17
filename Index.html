@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>夜遊び雑談ラウンジ — Discord</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@900&family=Noto+Sans+JP:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03050e;
+  --blue:#5865f2;
+  --purple:#7c3aed;
+  --cyan:#06b6d4;
+  --gold:#f0a500;
+  --text:#e8eaf6;
+  --muted:#9aa3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;overflow-x:hidden;cursor:none;}
+
+/* cursor */
+#cur{position:fixed;width:10px;height:10px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;transform:translate(-50%,-50%);}
+#ring{position:fixed;width:36px;height:36px;border:1px solid rgba(6,182,212,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+
+/* stars */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.s{position:absolute;border-radius:50%;background:#fff;animation:tw var(--d,3s) ease-in-out infinite alternate;}
+@keyframes tw{from{opacity:var(--a,.1);}to{opacity:var(--b,.6);}}
+
+section{position:relative;z-index:1;}
+
+/* ═══════════════════════════════
+   HERO
+═══════════════════════════════ */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:5rem 2rem 6rem;
+  position:relative;overflow:hidden;
+}
+
+/* layered glow bg */
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(88,101,242,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 70% 70%, rgba(124,58,237,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 20% 60%, rgba(6,182,212,.08) 0%, transparent 60%);
+  animation:bgpulse 8s ease-in-out infinite alternate;
+}
+@keyframes bgpulse{from{opacity:.7;}to{opacity:1;}}
+
+/* scan line */
+.scanline{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(6,182,212,.7) 50%,transparent 100%);animation:scan 8s linear infinite;top:0;}
+@keyframes scan{0%{top:0;opacity:1;}100%{top:100%;opacity:0;}}
+
+/* grid overlay */
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(88,101,242,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(88,101,242,.04) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+/* badge */
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  border:1px solid rgba(88,101,242,.45);
+  border-radius:100px;padding:.38rem 1.1rem;
+  font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.22em;
+  color:var(--cyan);text-transform:uppercase;
+  margin-bottom:2.5rem;
+  background:rgba(88,101,242,.1);
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 20px rgba(88,101,242,.15);
+  opacity:0;animation:fadeup .7s .1s forwards;
+}
+.bdot{width:6px;height:6px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan);animation:blink 1.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.1;}}
+
+/* ── TITLE ── */
+.hero-title-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.1em;
+  margin-bottom:1.5rem;
+  opacity:0;animation:fadeup .9s .3s forwards;
+}
+
+.title-line{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-weight:900;
+  font-size:clamp(3rem,10vw,7.5rem);
+  line-height:1;
+  letter-spacing:-.02em;
+  display:block;
+  width:100%;
+  text-align:center;
+
+  /* 3D effect */
+  background:linear-gradient(160deg,#ffffff 0%,#a5b4fc 40%,#60a5fa 65%,#06b6d4 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+
+  /* layered shadow for depth */
+  filter:
+    drop-shadow(0 0 30px rgba(88,101,242,.6))
+    drop-shadow(0 2px 0 rgba(30,20,80,.8))
+    drop-shadow(0 4px 0 rgba(20,10,60,.6))
+    drop-shadow(0 8px 20px rgba(0,0,0,.5));
+
+  /* subtle 3D tilt */
+  transform:perspective(600px) rotateX(4deg);
+  transform-origin:center bottom;
+}
+
+.title-line.sub-line{
+  font-size:clamp(2.2rem,7.5vw,5.6rem);
+  background:linear-gradient(160deg,#c4b5fd 0%,#818cf8 40%,#6366f1 70%,#4f46e5 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:
+    drop-shadow(0 0 24px rgba(124,58,237,.5))
+    drop-shadow(0 2px 0 rgba(30,20,80,.7))
+    drop-shadow(0 5px 14px rgba(0,0,0,.4));
+}
+
+/* divider stripe */
+.stripe{
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  margin-bottom:1.8rem;
+  opacity:0;animation:fadeup .7s .6s forwards;
+}
+.sl{height:1px;width:70px;border-radius:2px;}
+.sl.l{background:linear-gradient(to right,transparent,var(--blue));}
+.sl.r{background:linear-gradient(to left,transparent,var(--cyan));}
+.stripe span{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;}
+
+.hero-sub{
+  font-size:clamp(1rem,2.2vw,1.2rem);
+  color:var(--muted);font-weight:300;line-height:1.9;letter-spacing:.04em;
+  opacity:0;animation:fadeup .8s .75s forwards;
+}
+
+/* scroll indicator */
+.scroll-hint{
+  margin-top:4rem;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  color:rgba(154,163,184,.5);font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.2em;
+  opacity:0;animation:fadeup 1s 1.2s forwards;
+}
+.scroll-hint .ln{width:1px;height:44px;background:linear-gradient(to bottom,var(--cyan),transparent);animation:pln 2s ease-in-out infinite;}
+@keyframes pln{0%,100%{opacity:.2;transform:scaleY(.7);}50%{opacity:1;transform:scaleY(1);}}
+
+@keyframes fadeup{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+
+/* ═══════════════════════════════
+   SHARED
+═══════════════════════════════ */
+.divider{height:1px;background:linear-gradient(to right,transparent,rgba(88,101,242,.4),rgba(6,182,212,.4),transparent);}
+.night-line{height:60px;background:linear-gradient(180deg,transparent,rgba(88,101,242,.05),transparent);}
+
+.sec-label{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.35em;color:var(--cyan);text-transform:uppercase;display:block;margin-bottom:.9rem;}
+.sec-title{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:1.6rem;line-height:1.25;
+  background:linear-gradient(135deg,#fff 0%,#c4b5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ═══════════════════════════════
+   ABOUT
+═══════════════════════════════ */
+.about{padding:7rem 2rem;max-width:800px;margin:0 auto;text-align:center;}
+.about-desc{font-size:1.08rem;line-height:2.2;color:var(--muted);font-weight:300;}
+.about-desc strong{color:var(--text);font-weight:700;}
+
+/* ═══════════════════════════════
+   FEATURES
+═══════════════════════════════ */
+.features{padding:3rem 2rem 6rem;max-width:980px;margin:0 auto;}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:3rem;}
+.fcard{
+  background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:2.2rem 1.8rem;
+  position:relative;overflow:hidden;
+  transition:transform .35s,box-shadow .35s,border-color .35s;
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+}
+.fcard::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(88,101,242,.1),transparent 65%);opacity:0;transition:opacity .35s;}
+.fcard:hover{transform:translateY(-6px);border-color:rgba(88,101,242,.35);box-shadow:0 12px 40px rgba(88,101,242,.2);}
+.fcard:hover::before{opacity:1;}
+.fcard-icon{font-size:2.2rem;margin-bottom:1.1rem;display:block;}
+.fcard-title{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:1.08rem;margin-bottom:.7rem;color:#fff;}
+.fcard-desc{font-size:.97rem;color:var(--muted);line-height:1.85;font-weight:300;}
+
+/* ═══════════════════════════════
+   DISCORD GUIDE
+═══════════════════════════════ */
+.dguide{padding:5rem 2rem;max-width:920px;margin:0 auto;text-align:center;}
+.discord-what{
+  background:linear-gradient(135deg,rgba(88,101,242,.08),rgba(6,182,212,.05));
+  border:1px solid rgba(88,101,242,.22);border-radius:20px;
+  padding:2.4rem 2.8rem;margin:2rem 0 3rem;
+  box-shadow:0 4px 30px rgba(88,101,242,.1);
+}
+.discord-what p{font-size:1.05rem;color:var(--muted);line-height:2.1;font-weight:300;}
+.discord-what strong{color:var(--text);font-weight:700;}
+.guide-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1.6rem;text-align:left;}
+.gcard{
+  background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:2.2rem 2rem;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,.25);
+}
+.gcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.gcard.existing::before{background:linear-gradient(to right,var(--blue),var(--cyan));}
+.gcard.newuser::before{background:linear-gradient(to right,var(--purple),var(--blue));}
+.gcard-head{display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
+.gcard-icon{font-size:1.8rem;}
+.gcard-lbl{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;padding:.24rem .75rem;border-radius:100px;}
+.gcard.existing .gcard-lbl{background:rgba(88,101,242,.2);color:var(--cyan);}
+.gcard.newuser .gcard-lbl{background:rgba(124,58,237,.2);color:#c084fc;}
+.gcard-title{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:1.05rem;margin-bottom:1.2rem;color:#fff;}
+.steps{display:flex;flex-direction:column;gap:.9rem;}
+.step{display:flex;align-items:flex-start;gap:.8rem;font-size:.97rem;line-height:1.75;color:var(--muted);font-weight:300;}
+.snum{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;margin-top:.2rem;}
+.gcard.existing .snum{background:rgba(88,101,242,.25);color:var(--cyan);}
+.gcard.newuser .snum{background:rgba(124,58,237,.25);color:#c084fc;}
+.step strong{color:var(--text);font-weight:700;}
+
+/* ═══════════════════════════════
+   CONDITIONS
+═══════════════════════════════ */
+.conditions{padding:5rem 2rem;}
+.cond-inner{max-width:740px;margin:0 auto;text-align:center;}
+.cond-sub{color:var(--muted);font-size:1rem;margin-top:-.4rem;font-weight:300;}
+.cond-list{margin-top:2.8rem;display:flex;flex-direction:column;gap:1.2rem;}
+.citem{
+  display:flex;align-items:flex-start;gap:1.4rem;
+  background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+  border-left:3px solid var(--blue);
+  border-radius:16px;padding:1.6rem 1.8rem;text-align:left;
+  transition:border-left-color .3s,box-shadow .3s;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+}
+.citem:hover{border-left-color:var(--cyan);box-shadow:0 6px 30px rgba(6,182,212,.1);}
+.citem.gold{border-left-color:var(--gold);}
+.citem.gold:hover{box-shadow:0 6px 30px rgba(240,165,0,.1);}
+.cnum{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--blue);flex-shrink:0;line-height:1;margin-top:.05rem;}
+.cnum.g{color:var(--gold);}
+.ctext{font-size:1rem;line-height:1.88;color:var(--text);font-weight:300;}
+.ctext strong{color:#fff;font-weight:700;}
+
+/* ═══════════════════════════════
+   JOIN CTA
+═══════════════════════════════ */
+.join{padding:8rem 2rem;text-align:center;position:relative;}
+.join::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(88,101,242,.12),transparent 70%);pointer-events:none;}
+.join-title{
+  font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;
+  font-size:clamp(2.2rem,6vw,4rem);margin-bottom:1.2rem;line-height:1.1;
+}
+.jhl{background:linear-gradient(120deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.join-sub{color:var(--muted);font-size:1.05rem;margin-bottom:3rem;font-weight:300;}
+
+.btn-join{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.75rem;
+  background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 100%);
+  color:#fff;
+  font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:1.25rem;
+  padding:1.3rem 3.5rem;border-radius:80px;text-decoration:none;cursor:none;
+  position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.15) inset,
+    0 0 40px rgba(88,101,242,.6),
+    0 0 80px rgba(88,101,242,.2),
+    0 8px 30px rgba(0,0,0,.4);
+  letter-spacing:.03em;
+  white-space:nowrap;
+  line-height:1;
+}
+.btn-join::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(to bottom,rgba(255,255,255,.15),transparent);
+  border-radius:80px 80px 0 0;
+}
+.btn-join::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  transition:left .6s;
+}
+.btn-join:hover{transform:translateY(-5px) scale(1.04);box-shadow:0 0 0 1px rgba(255,255,255,.2) inset,0 0 60px rgba(88,101,242,.9),0 0 120px rgba(88,101,242,.3),0 14px 40px rgba(0,0,0,.5);}
+.btn-join:hover::after{left:150%;}
+.btn-join svg{width:26px;height:26px;flex-shrink:0;}
+
+.url-hint{margin-top:1.4rem;font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(154,163,184,.4);letter-spacing:.06em;}
+
+/* footer */
+footer{border-top:1px solid rgba(255,255,255,.05);padding:2.4rem 2rem;text-align:center;color:rgba(154,163,184,.3);font-size:.72rem;font-family:'Space Mono',monospace;letter-spacing:.05em;}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="ring"></div>
+<div id="stars"></div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="scanline"></div>
+
+  <div class="badge"><span class="bdot"></span>Discord Community</div>
+
+  <div class="hero-title-wrap">
+    <span class="title-line">夜遊び</span>
+    <span class="title-line sub-line">雑談ラウンジ</span>
+  </div>
+
+  <div class="stripe">
+    <div class="sl l"></div>
+    <span>Members Only</span>
+    <div class="sl r"></div>
+  </div>
+
+  <p class="hero-sub">夜の時間を、もっと自由に。<br>風活仲間と繋がるクローズドコミュニティ。</p>
+
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <div class="ln"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ABOUT ══ -->
+<section class="about reveal">
+  <span class="sec-label">About This Server</span>
+  <h2 class="sec-title">夜に集まる、風活好きたちのコミュニティ</h2>
+  <p class="about-desc">
+    <strong>X やその他の媒体では、凍結やアカウントバンが心配で<br>思ったことが自由に言えない</strong>——そんな経験、ありませんか？<br><br>
+    「夜遊び雑談ラウンジ」は、風活好きが集まるクローズドな Discord コミュニティ。<br>
+    外では言いにくい話も、ここではもう少し自由に、気兼ねなく話せる場所を目指しています。<br><br>
+    仲間と気軽に雑談したり、リアルな情報を交換したり。<br>
+    夜の時間をもっと充実させたい方、ぜひ一緒に盛り上がりましょう。
+  </p>
+</section>
+
+<div class="night-line"></div>
+
+<!-- ══ FEATURES ══ -->
+<section class="features reveal">
+  <div style="text-align:center">
+    <span class="sec-label">What You Can Do</span>
+    <h2 class="sec-title">こんなことができます</h2>
+  </div>
+  <div class="fgrid">
+    <div class="fcard">
+      <span class="fcard-icon">💬</span>
+      <div class="fcard-title">雑談・総合部屋</div>
+      <p class="fcard-desc">風活に関する話題を自由に話せる雑談スペース。日常トークからディープな情報交換まで。</p>
+    </div>
+    <div class="fcard">
+      <span class="fcard-icon">📝</span>
+      <div class="fcard-title">口コミ・体験レポ</div>
+      <p class="fcard-desc">実際の体験をシェアできるチャンネル。リアルな情報が集まるメンバー限定の場所。</p>
+    </div>
+    <div class="fcard">
+      <span class="fcard-icon">🤝</span>
+      <div class="fcard-title">繋がりを広げる</div>
+      <p class="fcard-desc">X で繋がった風活仲間と、ニックネームで Discord でも気軽に交流できます。</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ DISCORD GUIDE ══ -->
+<section class="dguide reveal">
+  <span class="sec-label">How To Join</span>
+  <h2 class="sec-title">Discordとは？　参加方法</h2>
+  <div class="discord-what">
+    <p>
+      <strong>Discord（ディスコード）</strong>は、テキスト・画像のやり取りができる無料のコミュニティアプリです。<br>
+      招待リンクから参加する仕組みで、<strong>X とは独立した環境</strong>でやり取りが可能。<br>
+      スマートフォン・PC どちらからでも無料で利用できます。
+    </p>
+  </div>
+  <div class="guide-cards">
+    <div class="gcard existing">
+      <div class="gcard-head">
+        <span class="gcard-icon">✅</span>
+        <span class="gcard-lbl">アカウントあり</span>
+      </div>
+      <div class="gcard-title">すでに Discord をお使いの方</div>
+      <div class="steps">
+        <div class="step"><span class="snum">1</span><span>下の「<strong>Discord に参加する</strong>」ボタンをタップ</span></div>
+        <div class="step"><span class="snum">2</span><span>Discord アプリが開いたら、そのまま<strong>参加</strong>をタップ</span></div>
+        <div class="step"><span class="snum">3</span><span>サーバー内で画面上部の<strong>サーバー名をタップ</strong> →「<strong>サーバープロフィールを編集</strong>」を選択</span></div>
+        <div class="step"><span class="snum">4</span><span>「<strong>ニックネーム</strong>」を X と同じニックネームに変更して保存</span></div>
+        <div class="step"><span class="snum">5</span><span>続けて「<strong>サーバーアバターを変更</strong>」から X と同じアイコン画像を設定して完了。<br>※すでにアイコンを設定済みの方は<strong>変更不要</strong>です。そのままご参加ください。</span></div>
+      </div>
+    </div>
+    <div class="gcard newuser">
+      <div class="gcard-head">
+        <span class="gcard-icon">🆕</span>
+        <span class="gcard-lbl">アカウントなし</span>
+      </div>
+      <div class="gcard-title">Discord アカウントをお持ちでない方</div>
+      <div class="steps">
+        <div class="step"><span class="snum">1</span><span>App Store / Google Play で「<strong>Discord</strong>」を検索してインストール</span></div>
+        <div class="step"><span class="snum">2</span><span>アプリを開き「<strong>登録</strong>」からアカウントを新規作成</span></div>
+        <div class="step"><span class="snum">3</span><span>登録完了後、下の「<strong>Discord に参加する</strong>」ボタンをタップ</span></div>
+        <div class="step"><span class="snum">4</span><span>プロフィール設定で<strong>ニックネームを X と同じ名前</strong>に設定</span></div>
+        <div class="step"><span class="snum">5</span><span><strong>アイコン画像</strong>も X と同じ画像にして完了</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ CONDITIONS ══ -->
+<section class="conditions">
+  <div class="cond-inner reveal">
+    <span class="sec-label">Join Conditions</span>
+    <h2 class="sec-title">入会条件</h2>
+    <p class="cond-sub">安心して楽しめるコミュニティを守るため、以下の条件を設けています</p>
+    <div class="cond-list">
+      <div class="citem">
+        <span class="cnum">01</span>
+        <p class="ctext"><strong>X（旧Twitter）で風活に関するアカウントを持っていること</strong><br>風活に関する内容を定期的に投稿している、アクティブな X アカウントをお持ちの方。非公開アカウントは対象外です。</p>
+      </div>
+      <div class="citem">
+        <span class="cnum">02</span>
+        <p class="ctext"><strong>X での投稿がアクティブであること</strong><br>直近で風活に関する投稿を行っているアカウントが対象です。長期間投稿がない方はご遠慮ください。</p>
+      </div>
+      <div class="citem">
+        <span class="cnum">03</span>
+        <p class="ctext"><strong>Discord 内のニックネームを X のニックネームと統一できること</strong><br>コミュニティの一体感を保つため、Discord のニックネームを X で使用しているニックネームと同じにしていただきます。</p>
+      </div>
+      <div class="citem gold">
+        <span class="cnum g">04</span>
+        <p class="ctext"><strong>入会には審査があります</strong><br>入会申請後、X のアカウントおよび投稿内容を確認させていただきます。コミュニティの趣旨に沿っているかを判断し、参加の可否をご連絡いたします。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ JOIN CTA ══ -->
+<section class="join reveal">
+  <h2 class="join-title">さあ、夜を<span class="jhl">楽しもう</span></h2>
+  <p class="join-sub">条件を満たしている方は、下のボタンから参加申請をどうぞ</p>
+  <a href="https://discord.gg/rDftdFjrg" class="btn-join" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+    Discord に参加する
+  </a>
+  <p class="url-hint">discord.gg/rDftdFjrg</p>
+</section>
+
+<footer>© 2025 夜遊び雑談ラウンジ — Discord Community &nbsp;|&nbsp; 招待制クローズドコミュニティ</footer>
+
+<script>
+// Stars
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<180;i++){
+    const el=document.createElement('div');
+    el.className='s';
+    const sz=(Math.random()*2+.3).toFixed(1);
+    el.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+(Math.random()*100).toFixed(2)+'%;left:'+(Math.random()*100).toFixed(2)+'%;--d:'+(Math.random()*5+2).toFixed(1)+'s;--a:'+(Math.random()*.1+.02).toFixed(2)+';--b:'+(Math.random()*.6+.15).toFixed(2)+';animation-delay:'+(Math.random()*6).toFixed(2)+'s';
+    c.appendChild(el);
+  }
+})();
+
+// Cursor
+(function(){
+  const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+  let cx=0,cy=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){cx=e.clientX;cy=e.clientY;});
+  function loop(){
+    cur.style.left=cx+'px';cur.style.top=cy+'px';
+    rx+=(cx-rx)*.12;ry+=(cy-ry)*.12;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// Reveal on scroll
+(function(){
+  const io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});
+  },{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>
